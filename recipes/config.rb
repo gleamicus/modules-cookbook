@@ -49,7 +49,7 @@ when 'ubuntu'
 
   service 'module-init-tools' do
     provider Chef::Provider::Service::Upstart
-    only_if { node['platform_version'] > '12.10' }
+    only_if { node['platform_version'] < '12.10' }
   end
 
   service 'modules-load' do
