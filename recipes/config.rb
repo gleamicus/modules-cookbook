@@ -49,6 +49,7 @@ when 'ubuntu'
 
   service 'module-init-tools' do
     provider Chef::Provider::Service::Upstart
+    only_if { node['platform_version'] > '12.10' }
   end
 
   service 'modules-load' do
@@ -66,8 +67,10 @@ template '/etc/modules-load.d/chef-default.conf' do
   owner 'root'
   group 'root'
   variables(
-    :modules => node['modules']['default']['modules']
+  :modules => node['modules']['default']['modules']
   )
   notifies :start, 'service[modules-load]'
   only_if { node['modules']['default']['modules'] }
 end
+
+
