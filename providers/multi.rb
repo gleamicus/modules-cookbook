@@ -31,6 +31,7 @@ action :save do
     owner 'root'
     group 'root'
     mode '0644'
+    cookbook 'modules'
     variables(
       :modules => new_resource.modules
       )
