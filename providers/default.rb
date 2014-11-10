@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-use_inline_resources
+# use_inline_resources
 
 include Chef::DSL::IncludeRecipe
 
 action :save do
 
-  include_recipe 'modules::config'
+  include_recipe('modules::config')
 
   file path do
     content new_resource.module + serialize_options
@@ -32,6 +32,7 @@ action :save do
     group 'root'
     mode '0644'
     only_if { supported? }
+    notifies :start, 'service[modules-load]'
   end
   run_action :load
 end

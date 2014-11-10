@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-use_inline_resources
+# use_inline_resources
 
 include Chef::DSL::IncludeRecipe
 
 action :save do
 
-  include_recipe 'modules::config'
+  include_recipe('modules::config')
 
   template path do
     source 'modules.conf.erb'
@@ -36,6 +36,7 @@ action :save do
       :modules => new_resource.modules
       )
     notifies :start, 'service[modules-load]'
+    ignore_failure true
     only_if { supported? }
   end
 end
