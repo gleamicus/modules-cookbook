@@ -37,6 +37,10 @@ cookbook_file '/etc/modules-load.d/header' do
   mode '0644'
 end
 
+file '/etc/modules-load.d/modules.conf' do
+  action :delete
+end
+
 # using upstart
 case node['platform']
 when 'ubuntu'
