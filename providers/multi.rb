@@ -34,8 +34,10 @@ action :save do
     cookbook 'modules'
     variables(
       :modules => new_resource.modules
-      )
-    notifies :start, 'service[modules-load]'
+    )
+    if node['init_package'] == 'init'
+      notifies :start, 'service[modules-load]'
+    end
     ignore_failure true
     only_if { supported? }
   end
@@ -47,7 +49,7 @@ action :remove do
   end
   # TODO: test this function
   new_resource.modules.each do |name|
-    execute 'unload module' do
+    execute "unload module #{name}" do
       command "modprobe -r #{name}"
     end
   end

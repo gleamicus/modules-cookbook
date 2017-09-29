@@ -19,6 +19,8 @@
 
 # TODO: do init script.
 
+return unless supported?
+
 file '/etc/modules-load.d/chef-attibutes.conf' do
   action :delete
 end
@@ -31,6 +33,8 @@ template '/etc/modules-load.d/chef-attributes.conf' do
   variables(
     :modules => node['modules']['modules']
   )
-  notifies :start, 'service[modules-load]'
+  if node['init_package'] == 'init'
+    notifies :start, 'service[modules-load]'
+  end
   only_if { node['modules']['modules'] }
 end

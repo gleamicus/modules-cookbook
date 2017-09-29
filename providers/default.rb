@@ -32,7 +32,9 @@ action :save do
     group 'root'
     mode '0644'
     only_if { supported? }
-    notifies :start, 'service[modules-load]'
+    if node['init_package'] == 'init'
+      notifies :start, 'service[modules-load]'
+    end
   end
   run_action :load
 end

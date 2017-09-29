@@ -44,22 +44,20 @@ end
 # using upstart
 case node['platform']
 when 'ubuntu'
-  cookbook_file '/etc/init/modules-load.conf' do
-    source 'modules-load.conf'
-    owner 'root'
-    group 'root'
-    mode '0644'
-  end
+  if node['init_package'] == 'init' && module_init_service
+    cookbook_file '/etc/init/modules-load.conf' do
+      source 'modules-load.conf'
+      owner 'root'
+      group 'root'
+      mode '0644'
+    end
 
-  service module_init_service do
-    provider Chef::Provider::Service::Upstart
-    only_if { node['platform_version'] < '12.10' }
-  end
+    package module_init_service
 
-  service 'modules-load' do
-    provider Chef::Provider::Service::Upstart
-    action [:enable, :start]
-    notifies :start, "service[#{module_init_service}]"
+    service 'modules-load' do
+      provider Chef::Provider::Service::Upstart
+      action [:enable, :start]
+    end
   end
 else
   return
@@ -71,10 +69,10 @@ template '/etc/modules-load.d/chef-default.conf' do
   owner 'root'
   group 'root'
   variables(
-  :modules => node['modules']['default']['modules']
+    :modules => node['modules']['default']['modules']
   )
-  notifies :start, 'service[modules-load]'
+  if node['init_package'] == 'init'
+    notifies :start, 'service[modules-load]'
+  end
   only_if { node['modules']['default']['modules'] }
 end
-
-
