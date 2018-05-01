@@ -63,16 +63,21 @@ else
   return
 end
 
-template '/etc/modules-load.d/chef-default.conf' do
-  source 'modules.conf.erb'
-  mode '0644'
-  owner 'root'
-  group 'root'
-  variables(
-    :modules => node['modules']['default']['modules']
-  )
-  if node['init_package'] == 'init'
-    notifies :start, 'service[modules-load]'
+if node['modules'] && node['modules']['default'] && node['modules']['default']['modules']
+  template '/etc/modules-load.d/chef-default.conf' do
+    source 'modules.conf.erb'
+    mode '0644'
+    owner 'root'
+    group 'root'
+    variables(
+      :modules => node['modules']['default']['modules']
+    )
+    if node['init_package'] == 'init'
+      notifies :start, 'service[modules-load]'
+    end
   end
-  only_if { node['modules']['default']['modules'] }
+else
+  file '/etc/modules-load.d/chef-default.conf' do
+    action :delete
+  end
 end
